@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animation</title>
+    <style>
+      canvas {
+        border-width: 1px;
+        border-style: solid;
+      }
+    </style>
+    <script>
+      var canvas;
+      var ctx;
+      var frame = 0;
+      var totalFrame = 5; // Total frame dalam sprite
+      var img = new Image();
+      var bgImg = new Image();
+      var lastTime = 0;
+      var x = 0; // Posisi gambar
+      var speed = 20; // Kecepatan pergerakan gambar
+
+      img.src = "img/cat.png"; // Sumber gambar
+      bgImg.src = "img/background.jpg"; // Ganti dengan sumber gambar latar belakang
+
+      img.onload = function () {
+        canvas = document.getElementById("myCanvas");
+        ctx = canvas.getContext("2d");
+        requestAnimationFrame(animate); // Memulai animasi
+      };
+
+      function animate(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        var deltaTime = timestamp - lastTime;
+
+        if (deltaTime > 100) {
+          // Mengatur frame rate
+          draw();
+          lastTime = timestamp;
+        }
+        requestAnimationFrame(animate); // Memanggil animasi berikutnya
+      }
+
+      function draw() {
+        // Menggambar latar belakang
+        if (bgImg.complete) {
+          ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+        }
+
+        var imgWidth = img.width / totalFrame; // Menghitung lebar gambar per frame
+        var imgHeight = img.height;
+
+        // Adjust the vertical position by adding an offset
+        var yOffset = 150; // Adjust this value to move the image downward
+
+        // Menggambar gambar
+        ctx.drawImage(
+          img,
+          imgWidth * frame,
+          0,
+          imgWidth,
+          imgHeight,
+          x,
+          (canvas.height - imgHeight) / 2 + yOffset,
+          imgWidth,
+          imgHeight
+        );
+
+        x += speed; // Memperbarui posisi
+
+        // Reset posisi jika gambar keluar dari canvas
+        if (x > canvas.width) {
+          x = -imgWidth;
+        }
+
+        frame++; // Mengupdate frame untuk animasi
+        if (frame >= totalFrame) {
+          frame = 0; // Reset frame jika mencapai total
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <center>
+      <canvas id="myCanvas" width="640" height="480"></canvas>
+    </center>
+  </body>
+</html>
